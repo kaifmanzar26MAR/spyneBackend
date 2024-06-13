@@ -21,15 +21,23 @@ const toggleFollow = asyncHandler(async (req, res) => {
     if (isfollowIndex !== -1) {
       // User ID exists, so remove it from the array
       userToFollow.follower.splice(isfollowIndex, 1);
-      const isfollowindIndex= user.following.findIndex(id=> id.toString() ===user._id.toString());
-      console.log("user unfooled the comment")
+      const isfollowingIndex= user.following.findIndex(id=> id.toString() ===userToFollow_id.toString());
+
+      user.following.splice(isfollowingIndex,1);
+      console.log("user unfollowed the comment")
       state= 'unfollwed'
     } else {
       // User ID does not exist, so add it to the array (if you want to handle toggling)
-      isCommentExist.commentLikes.push(userIdString);
-      console.log("user liked the comment")
-      state='liked'
+      user.following.push(userToFollow_id.toString());
+      userToFollow.follower.push(user._id.toString());
+      console.log("user follwed the comment")
+      state='followed'
     }
+
+    await user.save();
+    await userToFollow.save();
+
+    return res.status(201).json(new ApiResponse(200,{ user, userToFollow}, `user ${state} successfully!!`))
 })
 
 // controller to return subscriber list of a channel
